@@ -182,6 +182,7 @@ open class BasePopup(val popParams: WPopParams) : View.OnTouchListener {
      * 消失掉并且还原背景透明
      */
     fun dismiss() {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         if (mPopup.isShowing)
             mPopup.dismiss()
         resetDim()

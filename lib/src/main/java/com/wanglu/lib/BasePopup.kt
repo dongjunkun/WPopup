@@ -217,6 +217,48 @@ open class BasePopup(val popParams: WPopParams) : View.OnTouchListener {
         val location = getPopupShowLocation(view)
         mPopup.showAtLocation(view, Gravity.NO_GRAVITY, location[0], location[1])
     }
+    /**
+     * 获取popupWindow显示的位置
+     *
+     * 首先 如果上下左右都满足show的条件，那么则在正下方
+     * 其次 如果左右都有位置，那么显示在中间
+     * 最后 上下都有位置，那么显示在下面
+     */
+    fun getPopupShowLocation(view: View,direction: Int): IntArray {
+
+        val result = IntArray(2)
+
+        val viewLocation = IntArray(2)
+        view.getLocationInWindow(viewLocation)
+        val viewWidth = view.measuredWidth
+        val viewHeight = view.measuredHeight
+
+
+        popupContentViewSize = getPopupContentViewSize()
+
+
+        when (direction) {
+            WPopupDirection.LEFT -> {
+                result[0] = viewLocation[0] - popupContentViewSize[0] - Utils.dp2px(getContext(), popParams.commonPopMargin)
+                result[1] = viewLocation[1] + (viewHeight / 2) - (popupContentViewSize[1] / 2)
+            }
+            WPopupDirection.RIGHT -> {
+                result[0] = viewLocation[0] + viewWidth + Utils.dp2px(getContext(), popParams.commonPopMargin)
+                result[1] = viewLocation[1] + viewHeight / 2 - popupContentViewSize[1] / 2
+            }
+            WPopupDirection.BOTTOM -> {
+                result[0] = viewLocation[0] + viewWidth / 2 - popupContentViewSize[0] / 2
+                result[1] = viewLocation[1] + viewHeight + Utils.dp2px(getContext(), popParams.commonPopMargin)
+            }
+            WPopupDirection.TOP -> {
+                result[0] = viewLocation[0] + (viewWidth / 2) - popupContentViewSize[0] / 2
+                result[1] = viewLocation[1] - popupContentViewSize[1] - Utils.dp2px(getContext(), popParams.commonPopMargin)
+
+            }
+        }
+        return result
+
+    }
 
 
     /**
@@ -331,11 +373,14 @@ open class BasePopup(val popParams: WPopParams) : View.OnTouchListener {
             WPopupDirection.TOP -> {
                 result[0] = viewLocation[0] + (viewWidth / 2) - popupContentViewSize[0] / 2
                 result[1] = viewLocation[1] - popupContentViewSize[1] - Utils.dp2px(getContext(), popParams.commonPopMargin)
+
             }
         }
 
         mPopup.showAtLocation(view, Gravity.NO_GRAVITY, result[0], result[1])
     }
+
+
 
     /**
      * 根据手指长按位置来show

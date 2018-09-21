@@ -51,9 +51,9 @@ class ListActivity: AppCompatActivity() {
         val friendCirclePop = WPopup.Builder(this)
                 .setData(friendCircleData)
                 .setAnim(WPopupAnim.ANIM_FRIEND_CIRCLE)
-                .setIconDirection(WPopupDirection.LEFT)
+                .setIconDirection(WPopupDirection.TOP)
                 .setEnableChangeAnim(true)
-                .setPopupOrientation(WPopup.Builder.HORIZONTAL)
+                .setPopupOrientation(WPopup.Builder.VERTICAL)
                 .setOnItemClickListener(object : WPopup.Builder.OnItemClickListener {
                     override fun onItemClick(view: View, position: Int) {
                         Toast.makeText(view.context, friendCircleData[position].text, Toast.LENGTH_LONG).show()

@@ -65,7 +65,7 @@ class WPopup(popParams: WPopParams) : BasePopup(popParams) {
 
     override fun showAtDirectionByView(view: View, direction: Int) {
         if (direction == WPopupDirection.TOP || direction == WPopupDirection.BOTTOM)
-            setTriangle(view, direction)
+            setTriangle2(view, direction)
         else {
             if (triangle != null) {
                 commonRootLayout.removeView(triangle)
@@ -92,6 +92,64 @@ class WPopup(popParams: WPopParams) : BasePopup(popParams) {
         }
         commonAdapter.setShowView(position)
         super.showAtDirectionByView(view, direction)
+    }
+
+
+    /**
+     * 设置三角形
+     */
+    private fun setTriangle2(view: View, showDirection: Int) {
+
+
+        // 设置三角形的边距
+        val params: LinearLayout.LayoutParams
+        val viewLocation = IntArray(2)
+        view.getLocationInWindow(viewLocation)
+        val viewWidth = view.measuredWidth
+        val showLocation = getPopupShowLocation(view,showDirection)
+        val margin = viewLocation[0] + viewWidth / 2 - showLocation[0] - defaultMargin
+
+
+        // 判断显示位置来添加三角形 只有上下才添加
+        if (showDirection != oldDirection) {
+            if (triangle != null) {
+                commonRootLayout.removeView(triangle)
+                triangle = null
+            }
+
+            if (triangle == null) {
+                params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                params.leftMargin = margin
+                triangle = ImageView(view.context)
+                if (showDirection == WPopupDirection.TOP) {
+                    triangle!!.setBackgroundResource(R.drawable.triangle_down)
+                    commonRootLayout.addView(triangle, 1, params)
+                } else {
+                    triangle!!.setBackgroundResource(R.drawable.triangle_up)
+                    commonRootLayout.addView(triangle, 0, params)
+                }
+            }
+            oldDirection = showDirection
+        } else {
+            if (triangle != null) {
+                // 就算显示位置相同也要每次都更改三角形的位置
+                params = triangle!!.layoutParams as LinearLayout.LayoutParams
+                params.leftMargin = margin
+                triangle!!.layoutParams = params
+            }
+        }
+
+        /**
+         * 设置三角形的颜色
+         */
+        val layerList = triangle!!.background as LayerDrawable
+        val rotate = layerList.getDrawable(0) as RotateDrawable
+        (rotate.drawable as GradientDrawable).setColor(popParams.commonPopupBgColor)
+
+        // 设置rv背景的颜色
+        (recyclerView.background as GradientDrawable).setColor(popParams.commonPopupBgColor)
+
+
     }
 
 
